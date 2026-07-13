@@ -1,0 +1,13 @@
+{
+  "name": "@tizenbrowse/browser",
+  "version": "1.0.0",
+  "description": "Navegador web para Samsung Tizen TV",
+  "main": "index.html",
+  "appName": "TizenBrowse",
+  "appPath": "index.html",
+  "packageType": "app",
+  "keys": [],
+  "scripts": {},
+  "keywords": ["tizen", "samsung", "tv", "browser"],
+  "license": "MIT"
+}
