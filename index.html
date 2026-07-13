@@ -3,62 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, user-scalable=no">
-<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data:; media-src *; style-src * 'unsafe-inline';">
 <title>TizenBrowse</title>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 <style>
 :root{--bg:#0a0a1a;--surface:#12122a;--surface2:#1a1a3a;--accent:#4f8cff;--accent2:#3366cc;--text:#e0e0e0;--dim:#666;--border:#2a2a4a;--radius:8px}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-serif;font-size:16px;outline:none}
-
 .topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:8px;z-index:100;position:relative}
 .url-box{flex:1;height:38px;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:17px;padding:0 14px;outline:none;cursor:pointer}
 .url-box:focus{border-color:var(--accent);box-shadow:0 0 8px rgba(79,140,255,0.4)}
-
 .nav-btn{height:38px;min-width:44px;padding:0 14px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;outline:none}
 .nav-btn:focus{border-color:var(--accent);background:var(--accent2);box-shadow:0 0 12px rgba(79,140,255,0.3)}
 .nav-btn:disabled{opacity:0.3}
-
 .main{position:absolute;top:56px;left:0;right:0;bottom:0}
 .browser-frame{width:100%;height:100%;border:none;background:#fff}
 .loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(10,10,26,0.85);display:flex;align-items:center;justify-content:center;z-index:50}
 .loading-overlay.hidden{display:none}
 .spinner{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .home-page{position:absolute;top:56px;left:0;right:0;bottom:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:50px 80px;z-index:10}
 .home-page.hidden{display:none}
 .home-title{font-size:44px;font-weight:700;color:var(--accent);margin-bottom:8px}
 .home-subtitle{font-size:18px;color:var(--dim);margin-bottom:40px}
 .home-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:960px;width:100%}
 .home-card{height:90px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:600;transition:all 0.15s;outline:none}
-.home-card:focus{border-color:var(--accent);background:var(--surface2);transform:scale(1.05);box-shadow:0 0 16px rgba(79,140,255,0.3)}
-
+.home-card.focused{border-color:var(--accent);background:var(--surface2);transform:scale(1.05);box-shadow:0 0 16px rgba(79,140,255,0.3)}
 .bookmark-bar{height:40px;background:var(--surface);border-bottom:1px solid var(--border);display:none;align-items:center;padding:0 16px;gap:6px;z-index:90;overflow-x:auto}
 .bookmark-bar.show{display:flex}
 .bm-chip{height:30px;padding:0 12px;background:var(--surface2);border:1px solid var(--border);border-radius:15px;color:var(--text);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;outline:none}
-.bm-chip:focus{border-color:var(--accent);background:var(--accent2)}
-
+.bm-chip.focused{border-color:var(--accent);background:var(--accent2)}
 .keyboard-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:flex-end;justify-content:center}
 .keyboard-overlay.hidden{display:none}
 .kb-container{width:1920px;background:var(--surface);border-top:2px solid var(--accent);padding:12px 16px}
 .kb-input-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:0 16px}
 .kb-input{flex:1;height:44px;background:var(--bg);border:2px solid var(--accent);border-radius:var(--radius);color:var(--text);font-size:20px;padding:0 16px;outline:none}
 .kb-go{height:44px;padding:0 28px;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-size:18px;font-weight:600;cursor:pointer;outline:none}
-.kb-go:focus{background:var(--accent2)}
+.kb-go.focused{background:var(--accent2)}
 .kb-row{display:flex;justify-content:center;gap:5px;margin-bottom:5px}
 .kb-key{width:60px;height:44px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none}
-.kb-key:focus{border-color:var(--accent);background:var(--accent2)}
+.kb-key.focused{border-color:var(--accent);background:var(--accent2)}
 .kb-key.space{flex:1;max-width:360px}
 .kb-key.special{background:var(--accent2);font-size:13px;min-width:80px}
-
 .status-bar{position:fixed;bottom:0;left:0;right:0;height:36px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 16px;z-index:80;font-size:13px;color:var(--dim)}
 .status-bar.hidden{display:none}
 .status-dot{width:8px;height:8px;border-radius:50%;margin-right:8px;background:#555}
 .status-dot.on{background:#4f8cff}
 </style>
 </head>
-<body tabindex="0">
+<body>
 
 <div class="topbar">
   <button class="nav-btn" id="btnHome">&#8962;</button>
@@ -79,7 +71,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
 </div>
 
 <div class="main" id="browserArea">
-  <iframe class="browser-frame" id="browserFrame"></iframe>
+  <iframe class="browser-frame" id="browserFrame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
   <div class="loading-overlay hidden" id="loadingOverlay">
     <div class="spinner"></div>
   </div>
@@ -103,30 +95,19 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
 <script>
 (function(){
   try {
-    if (typeof tizen !== 'undefined' && tizen.tvinputdevice) {
-      tizen.tvinputdevice.registerKey('ArrowUp');
-      tizen.tvinputdevice.registerKey('ArrowDown');
-      tizen.tvinputdevice.registerKey('ArrowLeft');
-      tizen.tvinputdevice.registerKey('ArrowRight');
-      tizen.tvinputdevice.registerKey('Enter');
-      tizen.tvinputdevice.registerKey('Return');
-      tizen.tvinputdevice.registerKey('MediaPlayPause');
-      tizen.tvinputdevice.registerKey('MediaStop');
-      tizen.tvinputdevice.registerKey('MediaFastForward');
-      tizen.tvinputdevice.registerKey('MediaRewind');
+    if (window.tizen && window.tizen.tvinputdevice) {
+      var mediaKeys = [
+        'ColorF0Red','ColorF1Green','ColorF2Yellow','ColorF3Blue',
+        'MediaPlayPause','MediaStop','MediaFastForward','MediaRewind'
+      ];
+      mediaKeys.forEach(function(k){
+        try { window.tizen.tvinputdevice.registerKey(k); } catch(e){}
+      });
     }
   } catch(e) {}
 
   var LS_KEY = 'tizenbrowse_bm';
   var SEARCH = 'https://www.google.com/search?igu=1&q=';
-  var DEFAULTS = [
-    {name:'Google', url:'https://www.google.com'},
-    {name:'YouTube', url:'https://m.youtube.com'},
-    {name:'Wikipedia', url:'https://www.wikipedia.org'},
-    {name:'Reddit', url:'https://old.reddit.com'},
-    {name:'DuckDuckGo', url:'https://duckduckgo.com'},
-    {name:'BBC', url:'https://www.bbc.com'}
-  ];
   var LINKS = [
     {name:'Google', url:'https://www.google.com'},
     {name:'YouTube', url:'https://m.youtube.com'},
@@ -140,10 +121,10 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
 
   var bookmarks = [];
   try { bookmarks = JSON.parse(localStorage.getItem(LS_KEY)); } catch(e){}
-  if(!bookmarks || !bookmarks.length) bookmarks = DEFAULTS.slice();
+  if(!bookmarks || !bookmarks.length) bookmarks = LINKS.slice();
 
   var hist = [], histIdx = -1, isHome = true, kbVisible = false;
-  var focusedZone = 'home';
+  var focusIdx = 0;
 
   var urlBar = document.getElementById('urlBar');
   var frame = document.getElementById('browserFrame');
@@ -157,38 +138,38 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
   var statusText = document.getElementById('statusText');
 
   function setStatus(msg){ statusText.textContent = msg; }
-
-  function saveBm(){ try{localStorage.setItem(LS_KEY, JSON.stringify(bookmarks))}catch(e){} }
   function isUrl(s){ return /^[a-zA-Z]+:\/\//.test(s) || (/^[\w-]+(\.[\w-]+)+/.test(s) && !/\s/.test(s)); }
   function toUrl(s){ return s.indexOf('://') >= 0 ? s : 'https://' + s; }
 
-  function getFocusable(container){
-    return Array.prototype.slice.call(
-      (container || document).querySelectorAll('[tabindex]:not([tabindex="-1"]):not(:disabled)')
-    );
+  function clearAllFocus(){
+    document.querySelectorAll('.focused').forEach(function(el){ el.classList.remove('focused'); });
+  }
+
+  function focusCard(idx){
+    clearAllFocus();
+    var cards = homeGrid.querySelectorAll('.home-card');
+    if(!cards.length) return;
+    if(idx < 0) idx = 0;
+    if(idx >= cards.length) idx = cards.length - 1;
+    focusIdx = idx;
+    cards[idx].classList.add('focused');
   }
 
   function renderHome(){
     homePage.classList.remove('hidden');
     frame.style.display = 'none';
     isHome = true;
-    focusedZone = 'home';
     urlBar.value = '';
     homeGrid.innerHTML = '';
-    LINKS.forEach(function(lnk){
+    LINKS.forEach(function(lnk, i){
       var card = document.createElement('div');
       card.className = 'home-card';
-      card.setAttribute('tabindex', '0');
       card.setAttribute('data-url', lnk.url);
+      card.setAttribute('data-idx', i);
       card.textContent = lnk.name;
-      card.addEventListener('click', function(){ navigate(lnk.url); });
-      card.addEventListener('keydown', function(ev){
-        if(ev.key === 'Enter'){ ev.preventDefault(); navigate(lnk.url); }
-      });
       homeGrid.appendChild(card);
     });
-    var cards = getFocusable(homeGrid);
-    if(cards.length) cards[0].focus();
+    focusCard(0);
     setStatus('Inicio - usa flechas para navegar');
   }
 
@@ -197,9 +178,8 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     bookmarks.forEach(function(bm){
       var chip = document.createElement('div');
       chip.className = 'bm-chip';
-      chip.setAttribute('tabindex', '0');
       chip.textContent = bm.name;
-      chip.addEventListener('click', function(){ navigate(bm.url); });
+      chip.setAttribute('data-url', bm.url);
       bmBar.appendChild(chip);
     });
   }
@@ -211,15 +191,14 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     bmBar.classList.add('show');
     frame.style.display = 'block';
     isHome = false;
-    focusedZone = 'browse';
-    loading.classList.remove('hidden');
 
     hist = hist.slice(0, histIdx + 1);
     hist.push(url);
     histIdx = hist.length - 1;
 
     urlBar.value = url;
-    frame.src = url;
+    loading.classList.remove('hidden');
+    try { frame.src = url; } catch(e) { loading.classList.add('hidden'); }
     updateNav();
     setStatus('Cargando: ' + url);
   }
@@ -239,6 +218,8 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
       urlBar.value = hist[histIdx];
       frame.src = hist[histIdx];
       updateNav();
+    } else {
+      goHome();
     }
   }
 
@@ -274,7 +255,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
       bookmarks.push({name: name, url: url});
       setStatus('Marcado: ' + name);
     }
-    saveBm();
+    try{localStorage.setItem(LS_KEY, JSON.stringify(bookmarks))}catch(e){}
     renderBmBar();
     updateNav();
   }
@@ -306,10 +287,13 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
   var KB_ROWS = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
   var KB_SHIFT = ['!@#$%^&*()', 'QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
   var kbShift = false;
+  var kbFocusIdx = 0;
 
   function renderKb(){
     kbRows.innerHTML = '';
+    kbFocusIdx = 0;
     var layout = kbShift ? KB_SHIFT : KB_ROWS;
+    var allKeys = [];
     layout.forEach(function(row){
       var rowDiv = document.createElement('div');
       rowDiv.className = 'kb-row';
@@ -318,55 +302,33 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
           var key = document.createElement('button');
           key.className = 'kb-key';
           key.textContent = ch;
-          key.setAttribute('tabindex', '0');
-          key.addEventListener('click', function(){
-            kbInput.value += ch;
-            kbInput.focus();
-          });
+          key.setAttribute('data-ch', ch);
           rowDiv.appendChild(key);
+          allKeys.push(key);
         })(row[i]);
       }
       kbRows.appendChild(rowDiv);
     });
     var botRow = document.createElement('div');
     botRow.className = 'kb-row';
-
-    var shiftBtn = document.createElement('button');
-    shiftBtn.className = 'kb-key special';
-    shiftBtn.textContent = kbShift ? 'abc' : 'MAYUS';
-    shiftBtn.setAttribute('tabindex', '0');
-    shiftBtn.addEventListener('click', function(){ kbShift = !kbShift; renderKb(); });
-    botRow.appendChild(shiftBtn);
-
-    var dotBtn = document.createElement('button');
-    dotBtn.className = 'kb-key';
-    dotBtn.textContent = '.';
-    dotBtn.setAttribute('tabindex', '0');
-    dotBtn.addEventListener('click', function(){ kbInput.value += '.'; kbInput.focus(); });
-    botRow.appendChild(dotBtn);
-
-    var spaceBtn = document.createElement('button');
-    spaceBtn.className = 'kb-key space';
-    spaceBtn.textContent = 'ESPACIO';
-    spaceBtn.setAttribute('tabindex', '0');
-    spaceBtn.addEventListener('click', function(){ kbInput.value += ' '; kbInput.focus(); });
-    botRow.appendChild(spaceBtn);
-
-    var slashBtn = document.createElement('button');
-    slashBtn.className = 'kb-key';
-    slashBtn.textContent = '/';
-    slashBtn.setAttribute('tabindex', '0');
-    slashBtn.addEventListener('click', function(){ kbInput.value += '/'; kbInput.focus(); });
-    botRow.appendChild(slashBtn);
-
-    var delBtn = document.createElement('button');
-    delBtn.className = 'kb-key special';
-    delBtn.textContent = 'BORRAR';
-    delBtn.setAttribute('tabindex', '0');
-    delBtn.addEventListener('click', function(){ kbInput.value = kbInput.value.slice(0,-1); kbInput.focus(); });
-    botRow.appendChild(delBtn);
-
+    var specials = [
+      {cls:'kb-key special', text: kbShift ? 'abc' : 'MAYUS', action:'shift'},
+      {cls:'kb-key', text:'.', action:'dot'},
+      {cls:'kb-key space', text:'ESPACIO', action:'space'},
+      {cls:'kb-key', text:'/', action:'slash'},
+      {cls:'kb-key special', text:'BORRAR', action:'del'}
+    ];
+    specials.forEach(function(s){
+      var btn = document.createElement('button');
+      btn.className = s.cls;
+      btn.textContent = s.text;
+      btn.setAttribute('data-action', s.action);
+      botRow.appendChild(btn);
+      allKeys.push(btn);
+    });
     kbRows.appendChild(botRow);
+    window._kbAllKeys = allKeys;
+    if(allKeys.length) allKeys[0].classList.add('focused');
   }
 
   function showKb(){
@@ -375,14 +337,12 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     kbOverlay.classList.remove('hidden');
     kbVisible = true;
     renderKb();
-    setTimeout(function(){ kbInput.focus(); }, 50);
     setStatus('Teclado - escribe URL o busqueda');
   }
 
   function hideKb(){
     kbOverlay.classList.add('hidden');
     kbVisible = false;
-    document.body.focus();
   }
 
   document.getElementById('kbGo').addEventListener('click', function(){
@@ -391,111 +351,105 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     navigate(val);
   });
 
-  function focusTopbarBtn(dir){
-    var btns = getFocusable(document.querySelector('.topbar'));
-    var focused = document.activeElement;
-    var idx = btns.indexOf(focused);
-    if(idx < 0){
-      if(btns.length) btns[0].focus();
-      return;
-    }
-    var next = idx + dir;
-    if(next >= 0 && next < btns.length) btns[next].focus();
+  function handleKbAction(action, ch){
+    if(action === 'shift'){ kbShift = false; renderKb(); return; }
+    if(action === 'space'){ kbInput.value += ' '; return; }
+    if(action === 'slash'){ kbInput.value += '/'; return; }
+    if(action === 'dot'){ kbInput.value += '.'; return; }
+    if(action === 'del'){ kbInput.value = kbInput.value.slice(0,-1); return; }
+    if(ch) kbInput.value += ch;
   }
 
-  function focusHomeCard(dir){
-    var cards = getFocusable(homeGrid);
-    var focused = document.activeElement;
-    var idx = cards.indexOf(focused);
-    if(idx < 0){
-      if(cards.length) cards[0].focus();
-      return;
-    }
-    var cols = 4;
-    var next = idx + dir;
-    if(next >= 0 && next < cards.length) cards[next].focus();
+  function kbFocusNext(dir){
+    var keys = window._kbAllKeys || [];
+    if(!keys.length) return;
+    var cur = -1;
+    keys.forEach(function(k,i){ if(k.classList.contains('focused')) cur = i; });
+    var next = cur + dir;
+    if(next < 0) next = keys.length - 1;
+    if(next >= keys.length) next = 0;
+    keys.forEach(function(k){ k.classList.remove('focused'); });
+    keys[next].classList.add('focused');
   }
 
-  document.addEventListener('keydown', function(e){
+  function kbSelectCurrent(){
+    var keys = window._kbAllKeys || [];
+    var cur = null;
+    keys.forEach(function(k){ if(k.classList.contains('focused')) cur = k; });
+    if(!cur) return;
+    var ch = cur.getAttribute('data-ch');
+    var action = cur.getAttribute('data-action');
+    handleKbAction(action, ch);
+  }
+
+  function getTopbarBtns(){
+    return Array.prototype.slice.call(document.querySelectorAll('.topbar .nav-btn'));
+  }
+
+  function focusTopbarBtn(idx){
+    clearAllFocus();
+    var btns = getTopbarBtns();
+    if(!btns.length) return;
+    if(idx < 0) idx = 0;
+    if(idx >= btns.length) idx = btns.length - 1;
+    btns[idx].classList.add('focused');
+    window._topbarIdx = idx;
+  }
+
+  function topbarBtnClick(){
+    var btns = getTopbarBtns();
+    var idx = window._topbarIdx || 0;
+    if(btns[idx]) btns[idx].click();
+  }
+
+  window.addEventListener('keydown', function(e){
+    var code = e.keyCode || e.which;
     var key = e.key;
 
     if(kbVisible){
-      if(key === 'Escape' || key === 'Return'){
-        hideKb();
-        e.preventDefault();
-        return;
-      }
-      if(key === 'Enter'){
-        var val = kbInput.value;
-        hideKb();
-        navigate(val);
-        e.preventDefault();
-        return;
-      }
+      if(code === 10009 || code === 27){ hideKb(); e.preventDefault(); return; }
+      if(code === 13){ var val = kbInput.value; hideKb(); navigate(val); e.preventDefault(); return; }
+      if(code === 38){ kbFocusNext(-1); e.preventDefault(); return; }
+      if(code === 40){ kbFocusNext(1); e.preventDefault(); return; }
+      if(code === 37){ kbFocusNext(-1); e.preventDefault(); return; }
+      if(code === 39){ kbFocusNext(1); e.preventDefault(); return; }
+      if(code === 13){ kbSelectCurrent(); e.preventDefault(); return; }
       return;
     }
 
     if(isHome){
-      switch(key){
-        case 'ArrowRight': focusHomeCard(1); e.preventDefault(); break;
-        case 'ArrowLeft': focusHomeCard(-1); e.preventDefault(); break;
-        case 'ArrowDown': focusHomeCard(4); e.preventDefault(); break;
-        case 'ArrowUp': focusHomeCard(-4); e.preventDefault(); break;
-        case 'Enter':
-          var fc = document.activeElement;
-          if(fc && fc.getAttribute('data-url')){
-            navigate(fc.getAttribute('data-url'));
-          }
-          e.preventDefault();
-          break;
-        case 'Return':
-        case 'Escape':
-          e.preventDefault();
-          break;
+      var cards = homeGrid.querySelectorAll('.home-card');
+      var cols = 4;
+      if(code === 39){ focusCard(focusIdx + 1); e.preventDefault(); }
+      else if(code === 37){ focusCard(focusIdx - 1); e.preventDefault(); }
+      else if(code === 40){ focusCard(focusIdx + cols); e.preventDefault(); }
+      else if(code === 38){ focusCard(focusIdx - cols); e.preventDefault(); }
+      else if(code === 13){
+        var fc = cards[focusIdx];
+        if(fc) navigate(fc.getAttribute('data-url'));
+        e.preventDefault();
       }
+      else if(code === 10009 || code === 27){ e.preventDefault(); }
       return;
     }
 
-    switch(key){
-      case 'ArrowUp':
-        e.preventDefault();
-        focusedZone = 'topbar';
-        focusTopbarBtn(0);
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        focusTopbarBtn(-1);
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        focusTopbarBtn(1);
-        break;
-      case 'Enter':
-        var f = document.activeElement;
-        if(f && (f.tagName === 'BUTTON' || f.classList.contains('url-box'))){
-          f.click();
-        }
-        e.preventDefault();
-        break;
-      case 'Return':
-      case 'Backspace':
-        e.preventDefault();
-        goBack();
-        break;
-      case 'Escape':
-        e.preventDefault();
-        goHome();
-        break;
+    if(code === 10009 || code === 27){ e.preventDefault(); goHome(); }
+    else if(code === 38){ focusTopbarBtn(0); e.preventDefault(); }
+    else if(code === 37){ focusTopbarBtn((window._topbarIdx||0) - 1); e.preventDefault(); }
+    else if(code === 39){ focusTopbarBtn((window._topbarIdx||0) + 1); e.preventDefault(); }
+    else if(code === 13){
+      var focused = document.querySelector('.nav-btn.focused');
+      if(focused) focused.click();
+      e.preventDefault();
     }
+    else if(code === 8){ e.preventDefault(); goBack(); }
   });
 
-  document.body.focus();
-  renderHome();
+  window._topbarIdx = 0;
+  focusCard(0);
   renderBmBar();
   updateNav();
+  setStatus('TizenBrowse listo - v1.2');
 })();
 </script>
 </body>
