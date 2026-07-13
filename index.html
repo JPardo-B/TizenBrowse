@@ -7,66 +7,66 @@
 <style>
 :root{--bg:#0a0a1a;--surface:#12122a;--surface2:#1a1a3a;--accent:#4f8cff;--accent2:#3366cc;--text:#e0e0e0;--dim:#666;--border:#2a2a4a;--radius:8px}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-serif;font-size:16px;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-serif;font-size:16px;-webkit-tap-highlight-color:transparent;user-select:none;outline:none}
 
-.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;z-index:100}
-.url-box{flex:1;height:40px;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:18px;padding:0 16px;outline:none}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:8px;z-index:100;position:relative}
+.url-box{flex:1;height:38px;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:17px;padding:0 14px;outline:none;cursor:pointer}
 .url-box:focus{border-color:var(--accent)}
-.url-box.active-keyboard{border-color:#ff6b6b}
 
-.nav-btn{height:40px;padding:0 16px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;gap:6px}
-.nav-btn:focus{border-color:var(--accent);background:var(--accent2)}
-.nav-btn:disabled{opacity:0.3;pointer-events:none}
+.nav-btn{height:38px;min-width:44px;padding:0 14px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;outline:none}
+.nav-btn:focus{border-color:var(--accent);background:var(--accent2);box-shadow:0 0 12px rgba(79,140,255,0.3)}
+.nav-btn:disabled{opacity:0.3}
 
-.main{position:absolute;top:60px;left:0;right:0;bottom:0}
+.main{position:absolute;top:56px;left:0;right:0;bottom:0}
 .browser-frame{width:100%;height:100%;border:none;background:#fff}
-.loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50}
+.loading-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(10,10,26,0.85);display:flex;align-items:center;justify-content:center;z-index:50}
 .loading-overlay.hidden{display:none}
 .spinner{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.home-page{position:absolute;top:60px;left:0;right:0;bottom:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:60px 100px;z-index:10}
+.home-page{position:absolute;top:56px;left:0;right:0;bottom:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:50px 80px;z-index:10}
 .home-page.hidden{display:none}
-.home-title{font-size:48px;font-weight:700;color:var(--accent);margin-bottom:10px}
-.home-subtitle{font-size:20px;color:var(--dim);margin-bottom:50px}
-.home-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:1200px}
-.home-card{width:200px;height:100px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:600;transition:all 0.2s}
-.home-card:focus{border-color:var(--accent);background:var(--surface2);transform:scale(1.05)}
+.home-title{font-size:44px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.home-subtitle{font-size:18px;color:var(--dim);margin-bottom:40px}
+.home-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:960px;width:100%}
+.home-card{height:90px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:600;transition:all 0.15s;outline:none}
+.home-card:focus{border-color:var(--accent);background:var(--surface2);transform:scale(1.05);box-shadow:0 0 16px rgba(79,140,255,0.3)}
 
-.bookmark-bar{height:44px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:8px;overflow-x:auto;z-index:90}
-.bookmark-bar.hidden{display:none}
-.bm-chip{height:32px;padding:0 14px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.bookmark-bar{height:40px;background:var(--surface);border-bottom:1px solid var(--border);display:none;align-items:center;padding:0 16px;gap:6px;z-index:90;overflow-x:auto}
+.bookmark-bar.show{display:flex}
+.bm-chip{height:30px;padding:0 12px;background:var(--surface2);border:1px solid var(--border);border-radius:15px;color:var(--text);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;outline:none}
 .bm-chip:focus{border-color:var(--accent);background:var(--accent2)}
 
-.keyboard-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.keyboard-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:flex-end;justify-content:center}
 .keyboard-overlay.hidden{display:none}
-.kb-container{width:1920px;background:var(--surface);border-top:2px solid var(--accent);padding:16px}
-.kb-input-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:0 20px}
+.kb-container{width:1920px;background:var(--surface);border-top:2px solid var(--accent);padding:12px 16px}
+.kb-input-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:0 16px}
 .kb-input{flex:1;height:44px;background:var(--bg);border:2px solid var(--accent);border-radius:var(--radius);color:var(--text);font-size:20px;padding:0 16px;outline:none}
-.kb-go{height:44px;padding:0 24px;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-size:18px;font-weight:600;cursor:pointer}
+.kb-go{height:44px;padding:0 28px;background:var(--accent);border:none;border-radius:var(--radius);color:#fff;font-size:18px;font-weight:600;cursor:pointer;outline:none}
 .kb-go:focus{background:var(--accent2)}
-.kb-row{display:flex;justify-content:center;gap:6px;margin-bottom:6px}
-.kb-key{width:64px;height:48px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.kb-row{display:flex;justify-content:center;gap:5px;margin-bottom:5px}
+.kb-key{width:60px;height:44px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;outline:none}
 .kb-key:focus{border-color:var(--accent);background:var(--accent2)}
-.kb-key.wide{width:96px}
-.kb-key.wider{width:128px}
-.kb-key.space{flex:1;max-width:400px}
-.kb-key.special{background:var(--accent2);font-size:14px}
+.kb-key.space{flex:1;max-width:360px}
+.kb-key.special{background:var(--accent2);font-size:13px;min-width:80px}
+
+.status-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:24px 40px;color:var(--text);font-size:20px;z-index:300;text-align:center}
+.status-msg.hidden{display:none}
 </style>
 </head>
-<body>
+<body tabindex="0">
 
 <div class="topbar">
-  <button class="nav-btn" id="btnHome" title="Inicio">&#8962;</button>
-  <button class="nav-btn" id="btnBack" title="Atrás">&#9664;</button>
-  <button class="nav-btn" id="btnFwd" title="Adelante">&#9654;</button>
-  <input type="text" class="url-box" id="urlBar" placeholder="Escribe una URL o busca..." readonly>
-  <button class="nav-btn" id="btnGo" title="Ir">&#10148;</button>
-  <button class="nav-btn" id="btnBookmark" title="Marcar">&#9734;</button>
-  <button class="nav-btn" id="btnBookmarks" title="Marcadores">&#9776;</button>
+  <button class="nav-btn" id="btnHome" data-nav="home">&#8962; Inicio</button>
+  <button class="nav-btn" id="btnBack" data-nav="back" disabled>&#9664;</button>
+  <button class="nav-btn" id="btnFwd" data-nav="fwd" disabled>&#9654;</button>
+  <input type="text" class="url-box" id="urlBar" placeholder="Presiona OK para buscar..." readonly>
+  <button class="nav-btn" id="btnGo" data-nav="go">&#9654; Ir</button>
+  <button class="nav-btn" id="btnBookmark" data-nav="bm">&#9734;</button>
+  <button class="nav-btn" id="btnBookmarks" data-nav="bmlist">&#9776;</button>
 </div>
 
-<div class="bookmark-bar hidden" id="bookmarkBar"></div>
+<div class="bookmark-bar" id="bookmarkBar"></div>
 
 <div class="home-page" id="homePage">
   <div class="home-title">TizenBrowse</div>
@@ -75,7 +75,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
 </div>
 
 <div class="main" id="browserArea">
-  <iframe class="browser-frame" id="browserFrame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+  <iframe class="browser-frame" id="browserFrame"></iframe>
   <div class="loading-overlay hidden" id="loadingOverlay">
     <div class="spinner"></div>
   </div>
@@ -84,274 +84,448 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
 <div class="keyboard-overlay hidden" id="keyboardOverlay">
   <div class="kb-container">
     <div class="kb-input-row">
-      <input type="text" class="kb-input" id="kbInput" placeholder="URL o busqueda...">
-      <button class="kb-go" id="kbGo">IR</button>
+      <input type="text" class="kb-input" id="kbInput" placeholder="URL o busqueda en Google...">
+      <button class="kb-go" id="kbGo" data-nav="kbgo">IR &#10148;</button>
     </div>
     <div id="kbRows"></div>
   </div>
 </div>
 
+<div class="status-msg hidden" id="statusMsg"></div>
+
 <script>
 (function(){
-  const LS_KEY = 'tizenbrowse_bookmarks';
-  const SEARCH = 'https://www.google.com/search?igu=1&q=';
-  const DEFAULT_BOOKMARKS = [
+  var LS_KEY = 'tizenbrowse_bm';
+  var SEARCH = 'https://www.google.com/search?igu=1&q=';
+  var DEFAULTS = [
     {name:'Google', url:'https://www.google.com'},
     {name:'YouTube', url:'https://m.youtube.com'},
     {name:'Wikipedia', url:'https://www.wikipedia.org'},
     {name:'Reddit', url:'https://old.reddit.com'},
     {name:'DuckDuckGo', url:'https://duckduckgo.com'},
-    {name:'Noticias', url:'https://news.google.com'}
+    {name:'BBC', url:'https://www.bbc.com'}
   ];
-  const QUICK_LINKS = [
-    {name:'Google', url:'https://www.google.com', color:'#4285f4'},
-    {name:'YouTube', url:'https://m.youtube.com', color:'#ff0000'},
-    {name:'Wikipedia', url:'https://www.wikipedia.org', color:'#636466'},
-    {name:'Reddit', url:'https://old.reddit.com', color:'#ff4500'},
-    {name:'DuckDuckGo', url:'https://duckduckgo.com', color:'#de5833'},
-    {name:'CNN', url:'https://edition.cnn.com', color:'#cc0000'},
-    {name:'BBC', url:'https://www.bbc.com', color:'#bb1919'},
-    {name:'GitHub', url:'https://github.com', color:'#333'}
+  var LINKS = [
+    {name:'Google', url:'https://www.google.com'},
+    {name:'YouTube', url:'https://m.youtube.com'},
+    {name:'Wikipedia', url:'https://www.wikipedia.org'},
+    {name:'Reddit', url:'https://old.reddit.com'},
+    {name:'DuckDuckGo', url:'https://duckduckgo.com'},
+    {name:'CNN', url:'https://edition.cnn.com'},
+    {name:'BBC', url:'https://www.bbc.com'},
+    {name:'GitHub', url:'https://github.com'}
   ];
 
-  let bookmarks = JSON.parse(localStorage.getItem(LS_KEY) || 'null') || DEFAULT_BOOKMARKS;
-  let history = [];
-  let historyIdx = -1;
-  let showHome = true;
+  var bookmarks = [];
+  try { bookmarks = JSON.parse(localStorage.getItem(LS_KEY)); } catch(e){}
+  if(!bookmarks || !bookmarks.length) bookmarks = DEFAULTS.slice();
 
-  const $ = id => document.getElementById(id);
-  const urlBar = $('urlBar');
-  const browserFrame = $('browserFrame');
-  const homePage = $('homePage');
-  const homeGrid = $('homeGrid');
-  const loadingOverlay = $('loadingOverlay');
-  const bookmarkBar = $('bookmarkBar');
-  const keyboardOverlay = $('keyboardOverlay');
-  const kbInput = $('kbInput');
-  const kbRows = $('kbRows');
+  var hist = [], histIdx = -1, isHome = true, kbVisible = false;
+  var $ = function(id){ return document.getElementById(id); };
 
-  function saveBookmarks(){ localStorage.setItem(LS_KEY, JSON.stringify(bookmarks)); }
+  var urlBar = $('urlBar'), frame = $('browserFrame'), homePage = $('homePage');
+  var homeGrid = $('homeGrid'), loading = $('loadingOverlay'), bmBar = $('bookmarkBar');
+  var kbOverlay = $('keyboardOverlay'), kbInput = $('kbInput'), kbRows = $('kbRows');
+  var statusMsg = $('statusMsg');
 
-  function isUrl(s){ return s.includes('.') && !s.includes(' '); }
-  function toUrl(s){ return s.startsWith('http') ? s : 'https://' + s; }
-  function toSearch(s){ return SEARCH + encodeURIComponent(s); }
+  function saveBm(){ try{localStorage.setItem(LS_KEY, JSON.stringify(bookmarks))}catch(e){} }
+  function isUrl(s){ return /^[a-zA-Z]+:\/\//.test(s) || (/^[\w-]+(\.[\w-]+)+/.test(s) && !/\s/.test(s)); }
+  function toUrl(s){ return s.indexOf('://') >= 0 ? s : 'https://' + s; }
+
+  function showStatus(msg, ms){
+    statusMsg.textContent = msg;
+    statusMsg.classList.remove('hidden');
+    if(ms) setTimeout(function(){ statusMsg.classList.add('hidden'); }, ms);
+  }
+  function hideStatus(){ statusMsg.classList.add('hidden'); }
+
+  function focusBtn(sel){
+    var el = document.querySelector(sel);
+    if(el) el.focus();
+  }
 
   function renderHome(){
     homePage.classList.remove('hidden');
-    browserFrame.style.display = 'none';
-    showHome = true;
+    frame.style.display = 'none';
+    isHome = true;
     urlBar.value = '';
     homeGrid.innerHTML = '';
-    QUICK_LINKS.forEach((link, i) => {
-      const card = document.createElement('div');
+    LINKS.forEach(function(lnk){
+      var card = document.createElement('div');
       card.className = 'home-card';
-      card.tabIndex = 0;
-      card.textContent = link.name;
-      card.addEventListener('click', () => navigate(link.url));
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('data-url', lnk.url);
+      card.textContent = lnk.name;
+      card.addEventListener('click', function(){ navigate(lnk.url); });
+      card.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === 'RemoteEnter'){
+          e.preventDefault();
+          navigate(lnk.url);
+        }
+      });
       homeGrid.appendChild(card);
     });
+    setTimeout(function(){ focusBtn('.home-card'); }, 100);
   }
 
-  function renderBookmarks(){
-    bookmarkBar.classList.remove('hidden');
-    bookmarkBar.innerHTML = '';
-    bookmarks.forEach((bm, i) => {
-      const chip = document.createElement('div');
+  function renderBmBar(){
+    bmBar.innerHTML = '';
+    bookmarks.forEach(function(bm){
+      var chip = document.createElement('div');
       chip.className = 'bm-chip';
-      chip.tabIndex = 0;
+      chip.setAttribute('tabindex', '0');
       chip.textContent = bm.name;
-      chip.addEventListener('click', () => navigate(bm.url));
-      bookmarkBar.appendChild(chip);
+      chip.addEventListener('click', function(){ navigate(bm.url); });
+      chip.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === 'RemoteEnter'){
+          e.preventDefault();
+          navigate(bm.url);
+        }
+      });
+      bmBar.appendChild(chip);
     });
   }
 
   function navigate(url){
     if(!url) return;
-    url = isUrl(url) ? toUrl(url) : toSearch(url);
+    url = isUrl(url) ? toUrl(url) : SEARCH + encodeURIComponent(url);
     homePage.classList.add('hidden');
-    bookmarkBar.classList.remove('hidden');
-    browserFrame.style.display = 'block';
-    showHome = false;
-    loadingOverlay.classList.remove('hidden');
+    bmBar.classList.add('show');
+    frame.style.display = 'block';
+    isHome = false;
+    loading.classList.remove('hidden');
 
-    history = history.slice(0, historyIdx + 1);
-    history.push(url);
-    historyIdx = history.length - 1;
+    hist = hist.slice(0, histIdx + 1);
+    hist.push(url);
+    histIdx = hist.length - 1;
 
     urlBar.value = url;
-    browserFrame.src = url;
-    updateNavButtons();
+    frame.src = url;
+    updateNav();
   }
 
   function goHome(){
-    historyIdx = -1;
-    history = [];
+    histIdx = -1;
+    hist = [];
+    bmBar.classList.remove('show');
     renderHome();
-    updateNavButtons();
+    updateNav();
   }
 
-  function updateNavButtons(){
-    $('btnBack').disabled = historyIdx <= 0;
-    $('btnFwd').disabled = historyIdx >= history.length - 1;
-    $('btnBookmark').textContent = isBookmarked(urlBar.value) ? '\u2605' : '\u2606';
+  function goBack(){
+    if(histIdx > 0){
+      histIdx--;
+      loading.classList.remove('hidden');
+      urlBar.value = hist[histIdx];
+      frame.src = hist[histIdx];
+      updateNav();
+    }
+  }
+
+  function goFwd(){
+    if(histIdx < hist.length - 1){
+      histIdx++;
+      loading.classList.remove('hidden');
+      urlBar.value = hist[histIdx];
+      frame.src = hist[histIdx];
+      updateNav();
+    }
+  }
+
+  function updateNav(){
+    $('btnBack').disabled = histIdx <= 0;
+    $('btnFwd').disabled = histIdx >= hist.length - 1;
+    var bm = isBookmarked(urlBar.value);
+    $('btnBookmark').textContent = bm ? '\u2605' : '\u2606';
+    $('btnBookmark').setAttribute('data-bmed', bm ? '1' : '0');
   }
 
   function isBookmarked(url){
-    return bookmarks.some(b => b.url === url);
+    return bookmarks.some(function(b){ return b.url === url; });
   }
 
   function toggleBookmark(){
-    const url = urlBar.value;
+    var url = urlBar.value;
     if(!url) return;
     if(isBookmarked(url)){
-      bookmarks = bookmarks.filter(b => b.url !== url);
+      bookmarks = bookmarks.filter(function(b){ return b.url !== url; });
+      showStatus('Marcador eliminado', 1500);
     } else {
-      const name = prompt('Nombre del marcador:', new URL(url).hostname);
-      if(name) bookmarks.push({name, url});
+      var name = url.replace(/^https?:\/\//, '').split('/')[0];
+      bookmarks.push({name: name, url: url});
+      showStatus('Marcado: ' + name, 1500);
     }
-    saveBookmarks();
-    renderBookmarks();
-    updateNavButtons();
+    saveBm();
+    renderBmBar();
+    updateNav();
   }
 
-  browserFrame.addEventListener('load', () => {
-    loadingOverlay.classList.add('hidden');
+  frame.addEventListener('load', function(){
+    loading.classList.add('hidden');
     try {
-      const loc = browserFrame.contentWindow.location.href;
+      var loc = frame.contentWindow.location.href;
       if(loc && loc !== 'about:blank'){
         urlBar.value = loc;
-        history[historyIdx] = loc;
+        if(histIdx >= 0) hist[histIdx] = loc;
       }
     } catch(e){}
   });
 
-  browserFrame.addEventListener('error', () => {
-    loadingOverlay.classList.add('hidden');
+  frame.addEventListener('error', function(){
+    loading.classList.add('hidden');
   });
 
+  // Topbar buttons
   $('btnHome').addEventListener('click', goHome);
-  $('btnBack').addEventListener('click', () => {
-    if(historyIdx > 0){ historyIdx--; urlBar.value = history[historyIdx]; browserFrame.src = history[historyIdx]; updateNavButtons(); }
-  });
-  $('btnFwd').addEventListener('click', () => {
-    if(historyIdx < history.length - 1){ historyIdx++; urlBar.value = history[historyIdx]; browserFrame.src = history[historyIdx]; updateNavButtons(); }
-  });
-  $('btnGo').addEventListener('click', () => showKeyboard());
+  $('btnBack').addEventListener('click', goBack);
+  $('btnFwd').addEventListener('click', goFwd);
+  $('btnGo').addEventListener('click', showKb);
   $('btnBookmark').addEventListener('click', toggleBookmark);
-  $('btnBookmarks').addEventListener('click', () => {
-    if(bookmarkBar.classList.contains('hidden')) renderBookmarks();
-    else bookmarkBar.classList.add('hidden');
+  $('btnBookmarks').addEventListener('click', function(){
+    bmBar.classList.toggle('show');
   });
-  urlBar.addEventListener('click', () => showKeyboard());
+  urlBar.addEventListener('click', showKb);
 
-  const KB_LAYOUT = [
-    '1234567890',
-    'qwertyuiop',
-    'asdfghjkl',
-    'zxcvbnm',
-  ];
-  const KB_SHIFT_LAYOUT = [
-    '!@#$%^&*()',
-    'QWERTYUIOP',
-    'ASDFGHJKL',
-    'ZXCVBNM',
-  ];
-  let kbShift = false;
+  // Keyboard
+  var KB_ROWS = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+  var KB_SHIFT = ['!@#$%^&*()', 'QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+  var kbShift = false;
 
-  function renderKeyboard(){
+  function renderKb(){
     kbRows.innerHTML = '';
-    const layout = kbShift ? KB_SHIFT_LAYOUT : KB_LAYOUT;
-    layout.forEach(row => {
-      const rowDiv = document.createElement('div');
+    var layout = kbShift ? KB_SHIFT : KB_ROWS;
+    layout.forEach(function(row){
+      var rowDiv = document.createElement('div');
       rowDiv.className = 'kb-row';
-      row.split('').forEach(ch => {
-        const key = document.createElement('button');
-        key.className = 'kb-key';
-        key.textContent = ch;
-        key.tabIndex = 0;
-        key.addEventListener('click', () => { kbInput.value += ch; kbInput.focus(); });
-        rowDiv.appendChild(key);
-      });
+      for(var i = 0; i < row.length; i++){
+        (function(ch){
+          var key = document.createElement('button');
+          key.className = 'kb-key';
+          key.textContent = ch;
+          key.setAttribute('tabindex', '0');
+          key.setAttribute('data-nav', 'kb');
+          key.addEventListener('click', function(){
+            kbInput.value += ch;
+            kbInput.focus();
+          });
+          rowDiv.appendChild(key);
+        })(row[i]);
+      }
       kbRows.appendChild(rowDiv);
     });
+    var botRow = document.createElement('div');
+    botRow.className = 'kb-row';
 
-    const bottomRow = document.createElement('div');
-    bottomRow.className = 'kb-row';
+    var shiftBtn = document.createElement('button');
+    shiftBtn.className = 'kb-key special';
+    shiftBtn.textContent = kbShift ? 'abc' : 'MAYUS';
+    shiftBtn.setAttribute('tabindex', '0');
+    shiftBtn.setAttribute('data-nav', 'kb');
+    shiftBtn.addEventListener('click', function(){ kbShift = !kbShift; renderKb(); });
+    botRow.appendChild(shiftBtn);
 
-    const shiftKey = document.createElement('button');
-    shiftKey.className = 'kb-key special';
-    shiftKey.textContent = kbShift ? 'ABC' : 'SHIFT';
-    shiftKey.tabIndex = 0;
-    shiftKey.addEventListener('click', () => { kbShift = !kbShift; renderKeyboard(); });
-    bottomRow.appendChild(shiftKey);
+    var dotBtn = document.createElement('button');
+    dotBtn.className = 'kb-key';
+    dotBtn.textContent = '.';
+    dotBtn.setAttribute('tabindex', '0');
+    dotBtn.setAttribute('data-nav', 'kb');
+    dotBtn.addEventListener('click', function(){ kbInput.value += '.'; kbInput.focus(); });
+    botRow.appendChild(dotBtn);
 
-    const dotKey = document.createElement('button');
-    dotKey.className = 'kb-key';
-    dotKey.textContent = '.';
-    dotKey.tabIndex = 0;
-    dotKey.addEventListener('click', () => { kbInput.value += '.'; kbInput.focus(); });
-    bottomRow.appendChild(dotKey);
+    var spaceBtn = document.createElement('button');
+    spaceBtn.className = 'kb-key space';
+    spaceBtn.textContent = 'ESPACIO';
+    spaceBtn.setAttribute('tabindex', '0');
+    spaceBtn.setAttribute('data-nav', 'kb');
+    spaceBtn.addEventListener('click', function(){ kbInput.value += ' '; kbInput.focus(); });
+    botRow.appendChild(spaceBtn);
 
-    const spaceKey = document.createElement('button');
-    spaceKey.className = 'kb-key space';
-    spaceKey.textContent = 'ESPACIO';
-    spaceKey.tabIndex = 0;
-    spaceKey.addEventListener('click', () => { kbInput.value += ' '; kbInput.focus(); });
-    bottomRow.appendChild(spaceKey);
+    var slashBtn = document.createElement('button');
+    slashBtn.className = 'kb-key';
+    slashBtn.textContent = '/';
+    slashBtn.setAttribute('tabindex', '0');
+    slashBtn.setAttribute('data-nav', 'kb');
+    slashBtn.addEventListener('click', function(){ kbInput.value += '/'; kbInput.focus(); });
+    botRow.appendChild(slashBtn);
 
-    const slashKey = document.createElement('button');
-    slashKey.className = 'kb-key';
-    slashKey.textContent = '/';
-    slashKey.tabIndex = 0;
-    slashKey.addEventListener('click', () => { kbInput.value += '/'; kbInput.focus(); });
-    bottomRow.appendChild(slashKey);
+    var delBtn = document.createElement('button');
+    delBtn.className = 'kb-key special';
+    delBtn.textContent = 'BORRAR';
+    delBtn.setAttribute('tabindex', '0');
+    delBtn.setAttribute('data-nav', 'kb');
+    delBtn.addEventListener('click', function(){ kbInput.value = kbInput.value.slice(0,-1); kbInput.focus(); });
+    botRow.appendChild(delBtn);
 
-    const delKey = document.createElement('button');
-    delKey.className = 'kb-key special';
-    delKey.textContent = 'BORRAR';
-    delKey.tabIndex = 0;
-    delKey.addEventListener('click', () => { kbInput.value = kbInput.value.slice(0, -1); kbInput.focus(); });
-    bottomRow.appendChild(delKey);
-
-    kbRows.appendChild(bottomRow);
+    kbRows.appendChild(botRow);
   }
 
-  function showKeyboard(){
+  function showKb(){
     kbShift = false;
     kbInput.value = urlBar.value;
-    keyboardOverlay.classList.remove('hidden');
-    renderKeyboard();
-    setTimeout(() => kbInput.focus(), 100);
+    kbOverlay.classList.remove('hidden');
+    kbVisible = true;
+    renderKb();
+    setTimeout(function(){ kbInput.focus(); }, 50);
   }
 
-  function hideKeyboard(){ keyboardOverlay.classList.add('hidden'); }
+  function hideKb(){
+    kbOverlay.classList.add('hidden');
+    kbVisible = false;
+  }
 
-  $('kbGo').addEventListener('click', () => {
-    hideKeyboard();
-    navigate(kbInput.value);
-  });
-  keyboardOverlay.addEventListener('click', (e) => {
-    if(e.target === keyboardOverlay) hideKeyboard();
+  $('kbGo').addEventListener('click', function(){
+    var val = kbInput.value;
+    hideKb();
+    navigate(val);
   });
 
-  document.addEventListener('keydown', (e) => {
-    if(!keyboardOverlay.classList.contains('hidden')){
-      if(e.key === 'Escape') hideKeyboard();
-      if(e.key === 'Enter'){
-        hideKeyboard();
-        navigate(kbInput.value);
+  // === TV REMOTE / D-PAD NAVIGATION ===
+  document.addEventListener('keydown', function(e){
+    var key = e.key || e.keyCode;
+
+    // Keyboard overlay active
+    if(kbVisible){
+      if(key === 'Escape' || key === 'Backspace' && kbInput.value.length === 0){
+        hideKb();
+        e.preventDefault();
+        return;
       }
+      if(key === 'Enter'){
+        var val = kbInput.value;
+        hideKb();
+        navigate(val);
+        e.preventDefault();
+        return;
+      }
+      return; // let keyboard handle other keys
+    }
+
+    // Home page: navigate grid with arrows
+    if(isHome){
+      handleHomeNav(e);
       return;
     }
-    if(e.key === 'Return' || e.key === 'Enter'){
-      if(showHome || !urlBar.value) showKeyboard();
-    }
-    if(e.key === 'Escape') goHome();
+
+    // Browsing mode: topbar navigation
+    handleBrowseNav(e);
   });
 
+  // Register Tizen TV remote keys if available
+  try {
+    if(typeof tizen !== 'undefined' && tizen.tvinputdevice){
+      var remoteKeys = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Return','MediaPlayPause','MediaStop','MediaFastForward','MediaRewind'];
+      remoteKeys.forEach(function(k){
+        try { tizen.tvinputdevice.registerKey(k); } catch(ex){}
+      });
+    }
+  } catch(e){}
+
+  function handleHomeNav(e){
+    var focused = document.activeElement;
+    if(!focused || focused === document.body || focused === document.documentElement){
+      focusBtn('.home-card');
+      return;
+    }
+    var cards = Array.prototype.slice.call(homeGrid.querySelectorAll('.home-card'));
+    var idx = cards.indexOf(focused);
+    if(idx < 0) return;
+
+    var cols = 4;
+    var newIdx = idx;
+
+    switch(e.key){
+      case 'ArrowRight':
+        newIdx = Math.min(idx + 1, cards.length - 1);
+        e.preventDefault();
+        break;
+      case 'ArrowLeft':
+        newIdx = Math.max(idx - 1, 0);
+        e.preventDefault();
+        break;
+      case 'ArrowDown':
+        newIdx = Math.min(idx + cols, cards.length - 1);
+        e.preventDefault();
+        break;
+      case 'ArrowUp':
+        if(idx < cols){
+          focusBtn('.nav-btn:not(:disabled)');
+          e.preventDefault();
+          return;
+        }
+        newIdx = Math.max(idx - cols, 0);
+        e.preventDefault();
+        break;
+      case 'Enter':
+      case 'RemoteEnter':
+        navigate(focused.getAttribute('data-url'));
+        e.preventDefault();
+        return;
+      case 'Return':
+      case 'Escape':
+        e.preventDefault();
+        return;
+      default:
+        return;
+    }
+    if(newIdx !== idx && cards[newIdx]) cards[newIdx].focus();
+  }
+
+  function handleBrowseNav(e){
+    var focused = document.activeElement;
+
+    switch(e.key){
+      case 'ArrowUp':
+        e.preventDefault();
+        focusBtn('.topbar .nav-btn:first-child');
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        focusTopbarBtn(-1);
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        focusTopbarBtn(1);
+        break;
+      case 'Enter':
+        if(focused && focused.classList.contains('nav-btn') && !focused.disabled){
+          focused.click();
+        }
+        e.preventDefault();
+        break;
+      case 'Return':
+      case 'Backspace':
+        e.preventDefault();
+        if(isHome) return;
+        goBack();
+        break;
+      case 'Escape':
+        e.preventDefault();
+        goHome();
+        break;
+    }
+  }
+
+  function focusTopbarBtn(dir){
+    var btns = Array.prototype.slice.call(document.querySelectorAll('.topbar .nav-btn'));
+    var focused = document.activeElement;
+    var idx = btns.indexOf(focused);
+    if(idx < 0){
+      btns[0].focus();
+      return;
+    }
+    var next = idx + dir;
+    if(next >= 0 && next < btns.length){
+      btns[next].focus();
+    }
+  }
+
+  // Init
   renderHome();
-  renderBookmarks();
-  updateNavButtons();
+  renderBmBar();
+  updateNav();
 })();
 </script>
 </body>
