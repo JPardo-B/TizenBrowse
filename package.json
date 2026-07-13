@@ -5,7 +5,7 @@
   "description": "Navegador web para Samsung Tizen TV",
   "appPath": "index.html",
   "packageType": "mods",
-  "websiteURL": "https://raw.githack.com/JPardo-B/TizenBrowse/main/index.html",
+  "websiteURL": "http://192.168.1.82:8085",
   "keys": ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Enter","Return"],
   "scripts": {},
   "keywords": ["tizen", "samsung", "tv", "browser"],
