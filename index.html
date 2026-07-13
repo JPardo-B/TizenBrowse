@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data:; media-src *; style-src * 'unsafe-inline';">
 <title>TizenBrowse</title>
+<script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 <style>
 :root{--bg:#0a0a1a;--surface:#12122a;--surface2:#1a1a3a;--accent:#4f8cff;--accent2:#3366cc;--text:#e0e0e0;--dim:#666;--border:#2a2a4a;--radius:8px}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-serif;font-size:16px;-webkit-tap-highlight-color:transparent;user-select:none;outline:none}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,sans-serif;font-size:16px;outline:none}
 
 .topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:8px;z-index:100;position:relative}
 .url-box{flex:1;height:38px;background:var(--bg);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:17px;padding:0 14px;outline:none;cursor:pointer}
-.url-box:focus{border-color:var(--accent)}
+.url-box:focus{border-color:var(--accent);box-shadow:0 0 8px rgba(79,140,255,0.4)}
 
 .nav-btn{height:38px;min-width:44px;padding:0 14px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;outline:none}
 .nav-btn:focus{border-color:var(--accent);background:var(--accent2);box-shadow:0 0 12px rgba(79,140,255,0.3)}
@@ -50,20 +52,22 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
 .kb-key.space{flex:1;max-width:360px}
 .kb-key.special{background:var(--accent2);font-size:13px;min-width:80px}
 
-.status-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:24px 40px;color:var(--text);font-size:20px;z-index:300;text-align:center}
-.status-msg.hidden{display:none}
+.status-bar{position:fixed;bottom:0;left:0;right:0;height:36px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 16px;z-index:80;font-size:13px;color:var(--dim)}
+.status-bar.hidden{display:none}
+.status-dot{width:8px;height:8px;border-radius:50%;margin-right:8px;background:#555}
+.status-dot.on{background:#4f8cff}
 </style>
 </head>
 <body tabindex="0">
 
 <div class="topbar">
-  <button class="nav-btn" id="btnHome" data-nav="home">&#8962; Inicio</button>
-  <button class="nav-btn" id="btnBack" data-nav="back" disabled>&#9664;</button>
-  <button class="nav-btn" id="btnFwd" data-nav="fwd" disabled>&#9654;</button>
-  <input type="text" class="url-box" id="urlBar" placeholder="Presiona OK para buscar..." readonly>
-  <button class="nav-btn" id="btnGo" data-nav="go">&#9654; Ir</button>
-  <button class="nav-btn" id="btnBookmark" data-nav="bm">&#9734;</button>
-  <button class="nav-btn" id="btnBookmarks" data-nav="bmlist">&#9776;</button>
+  <button class="nav-btn" id="btnHome">&#8962;</button>
+  <button class="nav-btn" id="btnBack" disabled>&#9664;</button>
+  <button class="nav-btn" id="btnFwd" disabled>&#9654;</button>
+  <input type="text" class="url-box" id="urlBar" placeholder="Presiona OK para escribir..." readonly>
+  <button class="nav-btn" id="btnGo">IR &#10148;</button>
+  <button class="nav-btn" id="btnBookmark">&#9734;</button>
+  <button class="nav-btn" id="btnBookmarks">&#9776;</button>
 </div>
 
 <div class="bookmark-bar" id="bookmarkBar"></div>
@@ -85,16 +89,34 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
   <div class="kb-container">
     <div class="kb-input-row">
       <input type="text" class="kb-input" id="kbInput" placeholder="URL o busqueda en Google...">
-      <button class="kb-go" id="kbGo" data-nav="kbgo">IR &#10148;</button>
+      <button class="kb-go" id="kbGo">IR &#10148;</button>
     </div>
     <div id="kbRows"></div>
   </div>
 </div>
 
-<div class="status-msg hidden" id="statusMsg"></div>
+<div class="status-bar" id="statusBar">
+  <div class="status-dot on"></div>
+  <span id="statusText">TizenBrowse listo</span>
+</div>
 
 <script>
 (function(){
+  try {
+    if (typeof tizen !== 'undefined' && tizen.tvinputdevice) {
+      tizen.tvinputdevice.registerKey('ArrowUp');
+      tizen.tvinputdevice.registerKey('ArrowDown');
+      tizen.tvinputdevice.registerKey('ArrowLeft');
+      tizen.tvinputdevice.registerKey('ArrowRight');
+      tizen.tvinputdevice.registerKey('Enter');
+      tizen.tvinputdevice.registerKey('Return');
+      tizen.tvinputdevice.registerKey('MediaPlayPause');
+      tizen.tvinputdevice.registerKey('MediaStop');
+      tizen.tvinputdevice.registerKey('MediaFastForward');
+      tizen.tvinputdevice.registerKey('MediaRewind');
+    }
+  } catch(e) {}
+
   var LS_KEY = 'tizenbrowse_bm';
   var SEARCH = 'https://www.google.com/search?igu=1&q=';
   var DEFAULTS = [
@@ -121,33 +143,36 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
   if(!bookmarks || !bookmarks.length) bookmarks = DEFAULTS.slice();
 
   var hist = [], histIdx = -1, isHome = true, kbVisible = false;
-  var $ = function(id){ return document.getElementById(id); };
+  var focusedZone = 'home';
 
-  var urlBar = $('urlBar'), frame = $('browserFrame'), homePage = $('homePage');
-  var homeGrid = $('homeGrid'), loading = $('loadingOverlay'), bmBar = $('bookmarkBar');
-  var kbOverlay = $('keyboardOverlay'), kbInput = $('kbInput'), kbRows = $('kbRows');
-  var statusMsg = $('statusMsg');
+  var urlBar = document.getElementById('urlBar');
+  var frame = document.getElementById('browserFrame');
+  var homePage = document.getElementById('homePage');
+  var homeGrid = document.getElementById('homeGrid');
+  var loading = document.getElementById('loadingOverlay');
+  var bmBar = document.getElementById('bookmarkBar');
+  var kbOverlay = document.getElementById('keyboardOverlay');
+  var kbInput = document.getElementById('kbInput');
+  var kbRows = document.getElementById('kbRows');
+  var statusText = document.getElementById('statusText');
+
+  function setStatus(msg){ statusText.textContent = msg; }
 
   function saveBm(){ try{localStorage.setItem(LS_KEY, JSON.stringify(bookmarks))}catch(e){} }
   function isUrl(s){ return /^[a-zA-Z]+:\/\//.test(s) || (/^[\w-]+(\.[\w-]+)+/.test(s) && !/\s/.test(s)); }
   function toUrl(s){ return s.indexOf('://') >= 0 ? s : 'https://' + s; }
 
-  function showStatus(msg, ms){
-    statusMsg.textContent = msg;
-    statusMsg.classList.remove('hidden');
-    if(ms) setTimeout(function(){ statusMsg.classList.add('hidden'); }, ms);
-  }
-  function hideStatus(){ statusMsg.classList.add('hidden'); }
-
-  function focusBtn(sel){
-    var el = document.querySelector(sel);
-    if(el) el.focus();
+  function getFocusable(container){
+    return Array.prototype.slice.call(
+      (container || document).querySelectorAll('[tabindex]:not([tabindex="-1"]):not(:disabled)')
+    );
   }
 
   function renderHome(){
     homePage.classList.remove('hidden');
     frame.style.display = 'none';
     isHome = true;
+    focusedZone = 'home';
     urlBar.value = '';
     homeGrid.innerHTML = '';
     LINKS.forEach(function(lnk){
@@ -157,15 +182,14 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
       card.setAttribute('data-url', lnk.url);
       card.textContent = lnk.name;
       card.addEventListener('click', function(){ navigate(lnk.url); });
-      card.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' || e.key === 'RemoteEnter'){
-          e.preventDefault();
-          navigate(lnk.url);
-        }
+      card.addEventListener('keydown', function(ev){
+        if(ev.key === 'Enter'){ ev.preventDefault(); navigate(lnk.url); }
       });
       homeGrid.appendChild(card);
     });
-    setTimeout(function(){ focusBtn('.home-card'); }, 100);
+    var cards = getFocusable(homeGrid);
+    if(cards.length) cards[0].focus();
+    setStatus('Inicio - usa flechas para navegar');
   }
 
   function renderBmBar(){
@@ -176,12 +200,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
       chip.setAttribute('tabindex', '0');
       chip.textContent = bm.name;
       chip.addEventListener('click', function(){ navigate(bm.url); });
-      chip.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' || e.key === 'RemoteEnter'){
-          e.preventDefault();
-          navigate(bm.url);
-        }
-      });
       bmBar.appendChild(chip);
     });
   }
@@ -193,6 +211,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     bmBar.classList.add('show');
     frame.style.display = 'block';
     isHome = false;
+    focusedZone = 'browse';
     loading.classList.remove('hidden');
 
     hist = hist.slice(0, histIdx + 1);
@@ -202,6 +221,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     urlBar.value = url;
     frame.src = url;
     updateNav();
+    setStatus('Cargando: ' + url);
   }
 
   function goHome(){
@@ -233,11 +253,10 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
   }
 
   function updateNav(){
-    $('btnBack').disabled = histIdx <= 0;
-    $('btnFwd').disabled = histIdx >= hist.length - 1;
+    document.getElementById('btnBack').disabled = histIdx <= 0;
+    document.getElementById('btnFwd').disabled = histIdx >= hist.length - 1;
     var bm = isBookmarked(urlBar.value);
-    $('btnBookmark').textContent = bm ? '\u2605' : '\u2606';
-    $('btnBookmark').setAttribute('data-bmed', bm ? '1' : '0');
+    document.getElementById('btnBookmark').textContent = bm ? '\u2605' : '\u2606';
   }
 
   function isBookmarked(url){
@@ -249,11 +268,11 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     if(!url) return;
     if(isBookmarked(url)){
       bookmarks = bookmarks.filter(function(b){ return b.url !== url; });
-      showStatus('Marcador eliminado', 1500);
+      setStatus('Marcador eliminado');
     } else {
       var name = url.replace(/^https?:\/\//, '').split('/')[0];
       bookmarks.push({name: name, url: url});
-      showStatus('Marcado: ' + name, 1500);
+      setStatus('Marcado: ' + name);
     }
     saveBm();
     renderBmBar();
@@ -267,26 +286,23 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
       if(loc && loc !== 'about:blank'){
         urlBar.value = loc;
         if(histIdx >= 0) hist[histIdx] = loc;
+        setStatus(loc);
       }
-    } catch(e){}
+    } catch(e){
+      setStatus('Pagina cargada');
+    }
   });
 
-  frame.addEventListener('error', function(){
-    loading.classList.add('hidden');
-  });
-
-  // Topbar buttons
-  $('btnHome').addEventListener('click', goHome);
-  $('btnBack').addEventListener('click', goBack);
-  $('btnFwd').addEventListener('click', goFwd);
-  $('btnGo').addEventListener('click', showKb);
-  $('btnBookmark').addEventListener('click', toggleBookmark);
-  $('btnBookmarks').addEventListener('click', function(){
+  document.getElementById('btnHome').addEventListener('click', goHome);
+  document.getElementById('btnBack').addEventListener('click', goBack);
+  document.getElementById('btnFwd').addEventListener('click', goFwd);
+  document.getElementById('btnGo').addEventListener('click', showKb);
+  document.getElementById('btnBookmark').addEventListener('click', toggleBookmark);
+  document.getElementById('btnBookmarks').addEventListener('click', function(){
     bmBar.classList.toggle('show');
   });
   urlBar.addEventListener('click', showKb);
 
-  // Keyboard
   var KB_ROWS = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
   var KB_SHIFT = ['!@#$%^&*()', 'QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
   var kbShift = false;
@@ -303,7 +319,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
           key.className = 'kb-key';
           key.textContent = ch;
           key.setAttribute('tabindex', '0');
-          key.setAttribute('data-nav', 'kb');
           key.addEventListener('click', function(){
             kbInput.value += ch;
             kbInput.focus();
@@ -320,7 +335,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     shiftBtn.className = 'kb-key special';
     shiftBtn.textContent = kbShift ? 'abc' : 'MAYUS';
     shiftBtn.setAttribute('tabindex', '0');
-    shiftBtn.setAttribute('data-nav', 'kb');
     shiftBtn.addEventListener('click', function(){ kbShift = !kbShift; renderKb(); });
     botRow.appendChild(shiftBtn);
 
@@ -328,7 +342,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     dotBtn.className = 'kb-key';
     dotBtn.textContent = '.';
     dotBtn.setAttribute('tabindex', '0');
-    dotBtn.setAttribute('data-nav', 'kb');
     dotBtn.addEventListener('click', function(){ kbInput.value += '.'; kbInput.focus(); });
     botRow.appendChild(dotBtn);
 
@@ -336,7 +349,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     spaceBtn.className = 'kb-key space';
     spaceBtn.textContent = 'ESPACIO';
     spaceBtn.setAttribute('tabindex', '0');
-    spaceBtn.setAttribute('data-nav', 'kb');
     spaceBtn.addEventListener('click', function(){ kbInput.value += ' '; kbInput.focus(); });
     botRow.appendChild(spaceBtn);
 
@@ -344,7 +356,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     slashBtn.className = 'kb-key';
     slashBtn.textContent = '/';
     slashBtn.setAttribute('tabindex', '0');
-    slashBtn.setAttribute('data-nav', 'kb');
     slashBtn.addEventListener('click', function(){ kbInput.value += '/'; kbInput.focus(); });
     botRow.appendChild(slashBtn);
 
@@ -352,7 +363,6 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     delBtn.className = 'kb-key special';
     delBtn.textContent = 'BORRAR';
     delBtn.setAttribute('tabindex', '0');
-    delBtn.setAttribute('data-nav', 'kb');
     delBtn.addEventListener('click', function(){ kbInput.value = kbInput.value.slice(0,-1); kbInput.focus(); });
     botRow.appendChild(delBtn);
 
@@ -366,26 +376,51 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
     kbVisible = true;
     renderKb();
     setTimeout(function(){ kbInput.focus(); }, 50);
+    setStatus('Teclado - escribe URL o busqueda');
   }
 
   function hideKb(){
     kbOverlay.classList.add('hidden');
     kbVisible = false;
+    document.body.focus();
   }
 
-  $('kbGo').addEventListener('click', function(){
+  document.getElementById('kbGo').addEventListener('click', function(){
     var val = kbInput.value;
     hideKb();
     navigate(val);
   });
 
-  // === TV REMOTE / D-PAD NAVIGATION ===
-  document.addEventListener('keydown', function(e){
-    var key = e.key || e.keyCode;
+  function focusTopbarBtn(dir){
+    var btns = getFocusable(document.querySelector('.topbar'));
+    var focused = document.activeElement;
+    var idx = btns.indexOf(focused);
+    if(idx < 0){
+      if(btns.length) btns[0].focus();
+      return;
+    }
+    var next = idx + dir;
+    if(next >= 0 && next < btns.length) btns[next].focus();
+  }
 
-    // Keyboard overlay active
+  function focusHomeCard(dir){
+    var cards = getFocusable(homeGrid);
+    var focused = document.activeElement;
+    var idx = cards.indexOf(focused);
+    if(idx < 0){
+      if(cards.length) cards[0].focus();
+      return;
+    }
+    var cols = 4;
+    var next = idx + dir;
+    if(next >= 0 && next < cards.length) cards[next].focus();
+  }
+
+  document.addEventListener('keydown', function(e){
+    var key = e.key;
+
     if(kbVisible){
-      if(key === 'Escape' || key === 'Backspace' && kbInput.value.length === 0){
+      if(key === 'Escape' || key === 'Return'){
         hideKb();
         e.preventDefault();
         return;
@@ -397,86 +432,35 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
         e.preventDefault();
         return;
       }
-      return; // let keyboard handle other keys
+      return;
     }
 
-    // Home page: navigate grid with arrows
     if(isHome){
-      handleHomeNav(e);
-      return;
-    }
-
-    // Browsing mode: topbar navigation
-    handleBrowseNav(e);
-  });
-
-  // Register Tizen TV remote keys if available
-  try {
-    if(typeof tizen !== 'undefined' && tizen.tvinputdevice){
-      var remoteKeys = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Return','MediaPlayPause','MediaStop','MediaFastForward','MediaRewind'];
-      remoteKeys.forEach(function(k){
-        try { tizen.tvinputdevice.registerKey(k); } catch(ex){}
-      });
-    }
-  } catch(e){}
-
-  function handleHomeNav(e){
-    var focused = document.activeElement;
-    if(!focused || focused === document.body || focused === document.documentElement){
-      focusBtn('.home-card');
-      return;
-    }
-    var cards = Array.prototype.slice.call(homeGrid.querySelectorAll('.home-card'));
-    var idx = cards.indexOf(focused);
-    if(idx < 0) return;
-
-    var cols = 4;
-    var newIdx = idx;
-
-    switch(e.key){
-      case 'ArrowRight':
-        newIdx = Math.min(idx + 1, cards.length - 1);
-        e.preventDefault();
-        break;
-      case 'ArrowLeft':
-        newIdx = Math.max(idx - 1, 0);
-        e.preventDefault();
-        break;
-      case 'ArrowDown':
-        newIdx = Math.min(idx + cols, cards.length - 1);
-        e.preventDefault();
-        break;
-      case 'ArrowUp':
-        if(idx < cols){
-          focusBtn('.nav-btn:not(:disabled)');
+      switch(key){
+        case 'ArrowRight': focusHomeCard(1); e.preventDefault(); break;
+        case 'ArrowLeft': focusHomeCard(-1); e.preventDefault(); break;
+        case 'ArrowDown': focusHomeCard(4); e.preventDefault(); break;
+        case 'ArrowUp': focusHomeCard(-4); e.preventDefault(); break;
+        case 'Enter':
+          var fc = document.activeElement;
+          if(fc && fc.getAttribute('data-url')){
+            navigate(fc.getAttribute('data-url'));
+          }
           e.preventDefault();
-          return;
-        }
-        newIdx = Math.max(idx - cols, 0);
-        e.preventDefault();
-        break;
-      case 'Enter':
-      case 'RemoteEnter':
-        navigate(focused.getAttribute('data-url'));
-        e.preventDefault();
-        return;
-      case 'Return':
-      case 'Escape':
-        e.preventDefault();
-        return;
-      default:
-        return;
+          break;
+        case 'Return':
+        case 'Escape':
+          e.preventDefault();
+          break;
+      }
+      return;
     }
-    if(newIdx !== idx && cards[newIdx]) cards[newIdx].focus();
-  }
 
-  function handleBrowseNav(e){
-    var focused = document.activeElement;
-
-    switch(e.key){
+    switch(key){
       case 'ArrowUp':
         e.preventDefault();
-        focusBtn('.topbar .nav-btn:first-child');
+        focusedZone = 'topbar';
+        focusTopbarBtn(0);
         break;
       case 'ArrowDown':
         e.preventDefault();
@@ -490,15 +474,15 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
         focusTopbarBtn(1);
         break;
       case 'Enter':
-        if(focused && focused.classList.contains('nav-btn') && !focused.disabled){
-          focused.click();
+        var f = document.activeElement;
+        if(f && (f.tagName === 'BUTTON' || f.classList.contains('url-box'))){
+          f.click();
         }
         e.preventDefault();
         break;
       case 'Return':
       case 'Backspace':
         e.preventDefault();
-        if(isHome) return;
         goBack();
         break;
       case 'Escape':
@@ -506,23 +490,9 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:
         goHome();
         break;
     }
-  }
+  });
 
-  function focusTopbarBtn(dir){
-    var btns = Array.prototype.slice.call(document.querySelectorAll('.topbar .nav-btn'));
-    var focused = document.activeElement;
-    var idx = btns.indexOf(focused);
-    if(idx < 0){
-      btns[0].focus();
-      return;
-    }
-    var next = idx + dir;
-    if(next >= 0 && next < btns.length){
-      btns[next].focus();
-    }
-  }
-
-  // Init
+  document.body.focus();
   renderHome();
   renderBmBar();
   updateNav();

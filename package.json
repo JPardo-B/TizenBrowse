@@ -1,12 +1,12 @@
 {
   "name": "@tizenbrowse/browser",
-  "version": "1.0.0",
-  "description": "Navegador web para Samsung Tizen TV",
-  "main": "index.html",
+  "version": "1.1.0",
   "appName": "TizenBrowse",
+  "description": "Navegador web para Samsung Tizen TV",
   "appPath": "index.html",
-  "packageType": "app",
-  "keys": [],
+  "packageType": "mods",
+  "websiteURL": "https://raw.githack.com/JPardo-B/TizenBrowse/main/index.html",
+  "keys": ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Enter","Return"],
   "scripts": {},
   "keywords": ["tizen", "samsung", "tv", "browser"],
   "license": "MIT"
